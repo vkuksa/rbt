@@ -54,33 +54,33 @@ type RedBlackTreeSuite struct {
 func (suite *RedBlackTreeSuite) TestIsValidRBTree() {
 	tree := Make[int, int]()
 
-	assert.False(suite.T(), tree.IsValidRBTree())
+	assert.False(suite.T(), tree.isValidRBTree())
 
 	tree.root = MakeNode(5, 5, red)
-	assert.False(suite.T(), tree.IsValidRBTree())
+	assert.False(suite.T(), tree.isValidRBTree())
 
 	tree.root = MakeNode(5, 5, black)
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 
 	tree.root.left = MakeNode(2, 2, red)
 	tree.root.left.left = MakeNode(4, 4, red) // Violates BST and Red Property
 	tree.root.left.left.parent = tree.root.left
-	assert.False(suite.T(), tree.IsValidRBTree())
+	assert.False(suite.T(), tree.isValidRBTree())
 
 	tree.root.right = MakeNode(7, 7, red)
 	tree.root.right.right = MakeNode(9, 9, black)
 	tree.root.right.right.parent = tree.root.right
 
 	tree.root.left.left.key = 1 // Still violates Red Property
-	assert.False(suite.T(), tree.IsValidRBTree())
+	assert.False(suite.T(), tree.isValidRBTree())
 
 	tree.root.left.left.color = black
-	assert.False(suite.T(), tree.IsValidRBTree()) // Violates Depth Property
+	assert.False(suite.T(), tree.isValidRBTree()) // Violates Depth Property
 
 	// Add missing leaves to make tree have same black depth
 	tree.root.left.right = MakeNode(3, 3, black)
 	tree.root.right.left = MakeNode(6, 6, black)
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 }
 
 func (suite *RedBlackTreeSuite) TestCreateEmpty() {
@@ -245,7 +245,7 @@ func (suite *RedBlackTreeSuite) TestInsert() {
 	// -3(R)
 
 	assert.Equal(suite.T(), 12, tree.Size())
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 
 	assert.Equal(suite.T(), 17, tree.root.key)
 	assert.Equal(suite.T(), black, tree.root.color)
@@ -278,7 +278,7 @@ func (suite *RedBlackTreeSuite) TestDelete() {
 	}
 
 	assert.Equal(suite.T(), len(data), tree.Size())
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 
 	// Expected tree view at this moment:
 	// 				17(B)
@@ -291,7 +291,7 @@ func (suite *RedBlackTreeSuite) TestDelete() {
 	//   /
 	// -3(R)
 
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), []int{-3, 1, 3, 5, 8, 15, 17, 18, 25, 40, 60, 80}, tree.Keys())
 	assert.Equal(suite.T(), 8, tree.root.left.key)
 	assert.Equal(suite.T(), black, tree.root.left.color)
@@ -306,7 +306,7 @@ func (suite *RedBlackTreeSuite) TestDelete() {
 	//	  /	  	/		    /	\
 	//	-3(B)  5(R)	     40(R)	 80(R)
 
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), []int{-3, 1, 3, 5, 15, 17, 18, 25, 40, 60, 80}, tree.Keys())
 	assert.Equal(suite.T(), 3, tree.root.left.key)
 	assert.Equal(suite.T(), black, tree.root.left.color)
@@ -321,7 +321,7 @@ func (suite *RedBlackTreeSuite) TestDelete() {
 	//	  /	  	/		    /
 	//	-3(B)  5(R)	     40(R)
 
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), []int{-3, 1, 3, 5, 15, 17, 18, 25, 40, 60}, tree.Keys())
 	assert.Equal(suite.T(), 60, tree.root.right.right.key)
 	assert.Equal(suite.T(), black, tree.root.right.right.color)
@@ -336,7 +336,7 @@ func (suite *RedBlackTreeSuite) TestDelete() {
 	//	  /	  	/
 	//	-3(B) 5(R)
 
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), []int{-3, 1, 3, 5, 15, 17, 18, 25, 40}, tree.Keys())
 	assert.Equal(suite.T(), 17, tree.root.key)
 	assert.Equal(suite.T(), black, tree.root.color)
@@ -346,19 +346,19 @@ func (suite *RedBlackTreeSuite) TestDelete() {
 	assert.Equal(suite.T(), black, tree.root.left.color)
 
 	tree.Remove(5)
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), []int{-3, 1, 3, 15, 17, 18, 25, 40}, tree.Keys())
 
 	tree.Remove(1)
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), []int{-3, 3, 15, 17, 18, 25, 40}, tree.Keys())
 
 	tree.Remove(-3)
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), []int{3, 15, 17, 18, 25, 40}, tree.Keys())
 
 	tree.Remove(3)
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), []int{15, 17, 18, 25, 40}, tree.Keys())
 
 	// Expected tree view at this moment:
@@ -368,7 +368,7 @@ func (suite *RedBlackTreeSuite) TestDelete() {
 	//		  /   \
 	//	   15(R) 18(R)
 
-	assert.True(suite.T(), tree.IsValidRBTree())
+	assert.True(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), []int{15, 17, 18, 25, 40}, tree.Keys())
 
 	tree.Remove(15)
@@ -377,7 +377,7 @@ func (suite *RedBlackTreeSuite) TestDelete() {
 	tree.Remove(25)
 	tree.Remove(40)
 
-	assert.False(suite.T(), tree.IsValidRBTree())
+	assert.False(suite.T(), tree.isValidRBTree())
 	assert.Equal(suite.T(), 0, tree.Size())
 }
 
@@ -388,14 +388,14 @@ func (suite *RedBlackTreeSuite) TestWithSyntheticValues() {
 
 	for i := 0; i < n; i++ {
 		tree.Insert(int64(i), strconv.Itoa(i))
-		if !tree.IsValidRBTree() {
+		if !tree.isValidRBTree() {
 			c++
 		}
 	}
 
 	for i := n * 2; i > n; i-- {
 		tree.Insert(int64(i), strconv.Itoa(i))
-		if !tree.IsValidRBTree() {
+		if !tree.isValidRBTree() {
 			c++
 		}
 	}
@@ -406,13 +406,13 @@ func (suite *RedBlackTreeSuite) TestWithSyntheticValues() {
 
 	for i := 0; i < n; i++ {
 		tree.Remove(int64(i))
-		if !tree.IsValidRBTree() {
+		if !tree.isValidRBTree() {
 			c++
 		}
 	}
 	for i := n * 2; i > n; i-- {
 		tree.Remove(int64(i))
-		if !tree.IsValidRBTree() {
+		if !tree.isValidRBTree() {
 			c++
 		}
 	}
@@ -459,23 +459,22 @@ func (suite *RedBlackTreeSuite) TestSearch() {
 	assert.False(suite.T(), exists)
 }
 
-func (suite *RedBlackTreeSuite) TestPreorder() {
-	expected := []struct {
-		value int
-		color Color
-	}{{17, black}, {8, red}, {5, black}, {15, black}, {25, red}, {18, black}, {40, black}, {80, red}}
+func (suite *RedBlackTreeSuite) TestTraversal() {
+	expected := []int{5, 8, 15, 17, 18, 25, 40, 60}
 	tree := Make[int, int]()
 
-	for _, e := range expected {
-		tree.Insert(e.value, e.value)
+	for _, e := range []int{60, 25, 17, 5, 40, 8, 15, 18} {
+		tree.Insert(e, 0)
 	}
 
 	assert.Equal(suite.T(), len(expected), tree.Size())
 
-	for i, n := range tree.Preorder() {
-		assert.Equal(suite.T(), expected[i].value, n.value, fmt.Sprintf("Failed assertion of node value %s, expected %d", &n, expected[i].value))
-		assert.Equal(suite.T(), expected[i].color, n.color, fmt.Sprintf("Failed assertion of node color %s, expected opposite", &n))
-	}
+	actual := make([]int, 0, tree.Size())
+	tree.Traverse(func(k, v int) {
+		actual = append(actual, k)
+	})
+
+	assert.Equal(suite.T(), expected, actual)
 }
 
 func TestRedBlackTreeSuite(t *testing.T) {

@@ -1,3 +1,4 @@
+// Package redblacktree implements a Red-Black tree, a self-balancing binary search tree
 package rbt
 
 import (
@@ -70,14 +71,6 @@ func (node *Node[K, V]) inorder(closure func(node *Node[K, V])) {
 	}
 }
 
-func (node *Node[K, V]) preorder(closure func(node *Node[K, V])) {
-	if node != nil {
-		closure(node)
-		node.left.preorder(closure)
-		node.right.preorder(closure)
-	}
-}
-
 func (node *Node[K, V]) minimum() *Node[K, V] {
 	if node == nil {
 		return nil
@@ -144,13 +137,16 @@ type RedBlackTree[K constraints.Ordered, V any] struct {
 	size int
 }
 
-// Creates empty instance of a tree
+// Function Make creates empty instance of a tree
 func Make[K constraints.Ordered, V any]() *RedBlackTree[K, V] {
 	return &RedBlackTree[K, V]{}
 }
 
-// Inserts a value into a tree for a key with a given key
-// If key already exists - updates it's value
+/*
+Function Insert puts a value into a tree.
+It takes key and value parameters of corresponding types.
+If key already exists - function updates it's value
+*/
 func (tree *RedBlackTree[K, V]) Insert(k K, v V) {
 	n := MakeNode(k, v, red) // New node to be inserted
 
@@ -190,8 +186,12 @@ func (tree *RedBlackTree[K, V]) Insert(k K, v V) {
 	tree.size++
 }
 
-// Get searches the node in the tree by key and returns its value or nil if key is not found in tree.
-// Returns second bool parameter that indicates whether value was found in a map
+/*
+Function Search performs lookup for the node in the tree.
+It takes key as it's parameter.
+It returns the value for a provided key or nil if key is not found in tree.
+Returns second bool parameter that indicates whether value was found in a map
+*/
 func (tree *RedBlackTree[K, V]) Search(k K) (value V, exists bool) {
 	if n := tree.search(k); n == nil {
 		exists = false
@@ -203,7 +203,12 @@ func (tree *RedBlackTree[K, V]) Search(k K) (value V, exists bool) {
 	return
 }
 
-// Removes given key/value pair from a tree
+/*
+Function Remove removes given key/value pair from a tree.
+It takes single key value, for a lookup to be made.
+First, it searches for a node in a tree, on successfull lookup
+it passes a retrieved node to a helper function that deletes a node from a tree.
+*/
 func (tree *RedBlackTree[K, V]) Remove(k K) {
 	if n := tree.search(k); n != nil {
 		tree.delete(n)
@@ -212,7 +217,9 @@ func (tree *RedBlackTree[K, V]) Remove(k K) {
 	return
 }
 
-// Prints ordered collection of keys stored in a tree
+/*
+Function Keys returns a collection of a keys, stored in a map in inorder traversal order
+*/
 func (tree *RedBlackTree[K, V]) Keys() []K {
 	// Gathering copies of keys
 	result := make([]K, 0, tree.Size())
@@ -222,32 +229,35 @@ func (tree *RedBlackTree[K, V]) Keys() []K {
 	return result
 }
 
-// Returns a copy of a tree nodes in a preordered traversal
-func (tree *RedBlackTree[K, V]) Preorder() []Node[K, V] {
-	// Gathering copies of nodes, to not expose the tree for editing from within
-	result := make([]Node[K, V], 0, tree.Size())
-	tree.root.preorder(func(n *Node[K, V]) {
-		result = append(result, *n)
+/*
+Function Traverse applies a closure to every node of a tree
+in inorder traversal order
+*/
+func (tree *RedBlackTree[K, V]) Traverse(closure func(k K, v V)) {
+	tree.root.inorder(func(n *Node[K, V]) {
+		closure(n.key, n.value)
 	})
-	return result
 }
 
-// Returns a number of elements stored in a tree
+// Function Size returns a number of elements stored in a tree
 func (tree *RedBlackTree[K, V]) Size() int {
 	return tree.size
 }
 
-// A red-black tree satisfies the following properties:
-//
-//	Red/Black Property: Every node is colored, either red or black.
-//	Root Property: The root is black.
-//	Leaf Property: Every leaf (NIL) is black.
-//	Red Property: If a red node has children then, the children are always black.
-//	Depth Property: For each node, any simple path from this node to any of its descendant leaf has the same black-depth (the number of black nodes).
+/*
+Function isValidRBTree checks whether receiver satisfies Red-Black and BST tree properties
 
-// Note: as this implementation does not use sentinel nodes,
-// when tree is empty - it is not considered as valid
-func (tree *RedBlackTree[K, V]) IsValidRBTree() bool {
+A red-black tree satisfies the following properties:
+
+	Red/Black Property: Every node is colored, either red or black.
+	Root Property: The root is black.
+	Leaf Property: Every leaf (NIL) is black.
+	Red Property: If a red node has children then, the children are always black.
+	Depth Property: For each node, any simple path from this node to any of its descendant leaf has the same black-depth (the number of black nodes).
+
+Note: as this implementation does not use sentinel nodes, when tree is empty - it is not considered as valid
+*/
+func (tree *RedBlackTree[K, V]) isValidRBTree() bool {
 	// Check if root is nil or not black
 	if tree.root == nil || tree.root.color != black {
 		return false

@@ -6,6 +6,13 @@ import (
 	"strings"
 )
 
+/*
+Function MaxValue returns a maximum possible value for a given type using reflection.
+It supports orderable types.
+For a string it returns a value of a length 255, consisting of a runes with a maximum possible value.
+Values are returned by copy
+*/
+
 func MaxValue[T any]() T {
 	var v T
 	t := reflect.TypeOf(v)
@@ -39,6 +46,13 @@ func MaxValue[T any]() T {
 
 	return max.Interface().(T)
 }
+
+/*
+Function MinValue returns a minimal possible value for a given type using reflection.
+It supports orderable types.
+For a string it returns zero-value of it
+Values are returned by copy
+*/
 
 func MinValue[T any]() T {
 	var v T
